@@ -1,0 +1,12 @@
+# videos and generated results stay local
+video/*
+!video/.gitkeep
+outputs/
+*.mp4
+*.avi
+*.mkv
+*.webm
+*.part
+
+__pycache__/
+.ipynb_checkpoints/

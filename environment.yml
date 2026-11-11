@@ -1,0 +1,23 @@
+# conda env create -f environment.yml
+name: motion-gating
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - numpy
+  # OpenBLAS instead of MKL: on Windows, MKL only loads in an activated env, so Jupyter kernels crashed
+  - libblas=*=*openblas
+  - pandas
+  - matplotlib
+  - pillow
+  - imageio
+  - ffmpeg
+  - tqdm
+  - ipykernel
+  - notebook
+  - nbconvert
+  - pip
+  - pip:
+      - opencv-python-headless
+      - imagehash
