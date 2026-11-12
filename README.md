@@ -9,10 +9,10 @@ On the 30-min test video: **109 keyframes instead of 1,801** (1 per second), so 
 ```bash
 conda env create -f environment.yml          # once
 conda activate motion-gating
-python -m ipykernel install --user --name motion-gating   # once, makes the env available in Jupyter
+python -m ipykernel install --user --name motion-gating   # once, makes the env available in Jupyter(vscode prompts you for env automatically)
 
 python meva_30min.py        # download the test video into video/ (skip if you already have it)
-python motion_gating.py     # stage 1  (or: python motion_gating.py video/other.mp4)
+python motion_gating.py     # stage 1  (or: python motion_gating.py video/other.mp4, meva_30min.mp4 is defualt)
 python keyframes.py         # stage 2
 ```
 
@@ -37,7 +37,7 @@ Results go to `outputs/<video name>/`.
 3. **Detect moving pixels, two ways** (compared in the notebook):
    - *Frame differencing*: a pixel moved if its brightness changed a lot since the previous frame. Simple, but only sees things moving right now.
    - *MOG2 background subtraction*: learns what each pixel normally looks like over the last ~100 s. Anything that doesn't fit is "foreground". Used by default.
-4. **Clean up.** *Morphological opening* deletes isolated specks of noise.
+4. **Clean up.** *Morphological opening*, a clean-up filter for black and white masks to remove small specks of noise but keeps real blobs(people, cars). This is to not allow scattered flickering to add into the "% of pixels moving" score.
 5. **Lighting filter (MOG2).** Cloud shadows look like motion to MOG2. But a shadowed patch keeps its texture, so blobs that still
    *correlate* with the background (NCC > 0.7) are dropped. Without this, the strongest "motion" in the video was sunlight on the lawn.
 6. **Score** = % of pixels moving.
@@ -45,7 +45,7 @@ Results go to `outputs/<video name>/`.
 8. **Segments.** *Hysteresis*: start above a high threshold, stop below a lower one, so it doesn't flicker on and off.
    Then merge gaps under 3 s, drop pieces under 1 s, and add 2 s padding on each side.
 
-The slow part (decoding, ~50 s) is **cached** in `outputs/<video>/cache/`, so changing thresholds afterwards takes about a second.
+The slow part (decoding, ~50 s) is **cached** in `outputs/<video>/cache/` after first run, so changing thresholds afterwards takes about a second.
 
 ## Stage 2: keyframes (`keyframes.py`)
 
